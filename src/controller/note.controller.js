@@ -165,7 +165,7 @@ const filterAndSort = async (req, res) => {
     const filter = {};
     if (category) filter.category = category;
     if (isPinned !== undefined) filter.isPinned = isPinned === "true";
-    
+
     const sortOrder = order === "asc" ? 1 : -1;
     const notes = await Note.find(filter).sort({ [sortBy]: sortOrder });
     res.status(200).json({ success: true, message: "Notes fetched successfully", count: notes.length, data: notes });
@@ -180,14 +180,14 @@ const filterAndPaginate = async (req, res) => {
     const filter = {};
     if (category) filter.category = category;
     if (isPinned !== undefined) filter.isPinned = isPinned === "true";
-    
+
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
-    
+
     const total = await Note.countDocuments(filter);
     const notes = await Note.find(filter).skip(skip).limit(limitNum);
-    
+
     res.status(200).json({
       success: true,
       message: "Notes fetched successfully",
@@ -209,15 +209,15 @@ const filterAndPaginate = async (req, res) => {
 const sortAndPaginate = async (req, res) => {
   try {
     const { sortBy = "createdAt", order = "desc", page = 1, limit = 10 } = req.query;
-    
+
     const sortOrder = order === "asc" ? 1 : -1;
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
-    
+
     const total = await Note.countDocuments();
     const notes = await Note.find().sort({ [sortBy]: sortOrder }).skip(skip).limit(limitNum);
-    
+
     res.status(200).json({
       success: true,
       message: "Notes fetched successfully",
@@ -249,7 +249,7 @@ const searchAndFilter = async (req, res) => {
     ];
     if (category) filter.category = category;
     if (isPinned !== undefined) filter.isPinned = isPinned === "true";
-    
+
     const notes = await Note.find(filter);
     res.status(200).json({ success: true, message: `Search results for: ${q}`, count: notes.length, data: notes });
   } catch (error) {
@@ -269,15 +269,15 @@ const searchSortPaginate = async (req, res) => {
         { content: { $regex: q, $options: "i" } }
       ]
     };
-    
+
     const sortOrder = order === "asc" ? 1 : -1;
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
-    
+
     const total = await Note.countDocuments(filter);
     const notes = await Note.find(filter).sort({ [sortBy]: sortOrder }).skip(skip).limit(limitNum);
-    
+
     res.status(200).json({
       success: true,
       message: `Search results for: ${q}`,
@@ -302,15 +302,15 @@ const filterSortPaginate = async (req, res) => {
     const filter = {};
     if (category) filter.category = category;
     if (isPinned !== undefined) filter.isPinned = isPinned === "true";
-    
+
     const sortOrder = order === "asc" ? 1 : -1;
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
-    
+
     const total = await Note.countDocuments(filter);
     const notes = await Note.find(filter).sort({ [sortBy]: sortOrder }).skip(skip).limit(limitNum);
-    
+
     res.status(200).json({
       success: true,
       message: "Notes fetched successfully",
@@ -336,20 +336,20 @@ const masterQuery = async (req, res) => {
     const filter = {};
     if (q) {
       filter.$or = [
-        { title:   { $regex: q, $options: "i" } },
+        { title: { $regex: q, $options: "i" } },
         { content: { $regex: q, $options: "i" } }
       ];
     }
-    if (category)                filter.category = category;
-    if (isPinned !== undefined)  filter.isPinned  = isPinned === "true";
+    if (category) filter.category = category;
+    if (isPinned !== undefined) filter.isPinned = isPinned === "true";
 
     const allowedSortFields = ["title", "createdAt", "updatedAt", "category"];
     const sortField = allowedSortFields.includes(sortBy) ? sortBy : "createdAt";
     const sortOrder = order === "asc" ? 1 : -1;
 
-    const pageNum  = parseInt(page)  || 1;
+    const pageNum = parseInt(page) || 1;
     const limitNum = parseInt(limit) || 10;
-    const skip     = (pageNum - 1) * limitNum;
+    const skip = (pageNum - 1) * limitNum;
 
     const total = await Note.countDocuments(filter);
     const notes = await Note.find(filter)
@@ -363,9 +363,9 @@ const masterQuery = async (req, res) => {
       data: notes,
       pagination: {
         total,
-        page:        pageNum,
-        limit:       limitNum,
-        totalPages:  Math.ceil(total / limitNum),
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
         hasNextPage: pageNum < Math.ceil(total / limitNum),
         hasPrevPage: pageNum > 1,
       },
