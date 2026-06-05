@@ -11,7 +11,8 @@ const {
   deleteNote,
   deleteBulkNotes,
   searchByTitle,
-  searchByContent
+  searchByContent,
+  searchAll
 } = require("../controller/note.controller");
 
 // CRUD bulk
@@ -21,6 +22,7 @@ router.delete("/bulk", deleteBulkNotes);
 // Search routes
 router.get("/search", searchByTitle);
 router.get("/search/content", searchByContent);
+router.get("/search/all", searchAll);
 
 // CRUD single-item routes LAST
 router.post("/", createNote);
