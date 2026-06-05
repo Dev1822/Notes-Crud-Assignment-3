@@ -14,7 +14,8 @@ const {
   searchByContent,
   searchAll,
   filterAndSort,
-  filterAndPaginate
+  filterAndPaginate,
+  sortAndPaginate
 } = require("../controller/note.controller");
 
 // CRUD bulk
@@ -29,6 +30,7 @@ router.get("/search/all", searchAll);
 // Combination routes
 router.get("/filter-sort", filterAndSort);
 router.get("/filter-paginate", filterAndPaginate);
+router.get("/sort-paginate", sortAndPaginate);
 
 // CRUD single-item routes LAST
 router.post("/", createNote);
