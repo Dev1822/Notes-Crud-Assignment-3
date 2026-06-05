@@ -257,6 +257,45 @@ const searchAndFilter = async (req, res) => {
   }
 };
 
+const searchSortPaginate = async (req, res) => {
+  try {
+    const { q, sortBy = "createdAt", order = "desc", page = 1, limit = 10 } = req.query;
+    if (!q) {
+      return res.status(400).json({ success: false, message: "Search query 'q' is required", data: null });
+    }
+    const filter = {
+      $or: [
+        { title: { $regex: q, $options: "i" } },
+        { content: { $regex: q, $options: "i" } }
+      ]
+    };
+    
+    const sortOrder = order === "asc" ? 1 : -1;
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+    
+    const total = await Note.countDocuments(filter);
+    const notes = await Note.find(filter).sort({ [sortBy]: sortOrder }).skip(skip).limit(limitNum);
+    
+    res.status(200).json({
+      success: true,
+      message: `Search results for: ${q}`,
+      data: notes,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        totalPages: Math.ceil(total / limitNum),
+        hasNextPage: pageNum < Math.ceil(total / limitNum),
+        hasPrevPage: pageNum > 1
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message, data: null });
+  }
+};
+
 module.exports = {
   createNote,
   createBulkNotes,
@@ -272,5 +311,6 @@ module.exports = {
   filterAndSort,
   filterAndPaginate,
   sortAndPaginate,
-  searchAndFilter
+  searchAndFilter,
+  searchSortPaginate
 };
